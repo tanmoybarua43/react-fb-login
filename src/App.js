@@ -1,24 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import FacebookLogin from "react-facebook-login";
+import { Container, Card, Button } from "react-bootstrap";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 function App() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userData, setUserData] = useState({});
+
+  const responseFacebook = (response) => {
+    if (response.accessToken) {
+      setIsLoggedIn(true);
+      setUserData(response);
+    } else {
+      setIsLoggedIn(false);
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container>
+      <Card className="mt-5">
+        <Card.Body>
+          {!isLoggedIn ? (
+            <>
+              <h3>Login with Facebook</h3>
+              <FacebookLogin
+                appId="516518647986597"
+                autoLoad={false}
+                fields="name,email,picture"
+                callback={responseFacebook}
+                icon="fa-facebook"
+              />
+            </>
+          ) : (
+            <div>
+              <h3>Welcome, {userData.name}!</h3>
+              <img src={userData.picture.data.url} alt="Profile" />
+              <p>Email: {userData.email}</p>
+            </div>
+          )}
+        </Card.Body>
+      </Card>
+    </Container>
   );
 }
 
